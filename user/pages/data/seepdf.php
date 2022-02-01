@@ -40,4 +40,5 @@ if($id){
     echo'
     <embed src="dokumen/jurnal/'.$dataJ['file'].'#toolbar=0" type="application/pdf" width="100%" height="500px">
     ';
+    
 }

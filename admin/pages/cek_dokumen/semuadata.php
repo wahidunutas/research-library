@@ -262,12 +262,20 @@ if (isset($_GET['id']) && isset($_GET['act'])) {
     if (file_exists("../user/dokumen/". $files)) {
         unlink("../user/dokumen/". $files);
     }
+    $sqlzp = $koneksi->query("SELECT * FROM data_file_project WHERE id_info_doc = '$id'");
+    $zp = $sqlzp->fetch_assoc();
+    $zip = $zp['file_project'];
+    if (file_exists("../user/dokumen/project/". $zip)) {
+        unlink("../user/dokumen/project/". $zip);
+    }
 
     $koneksi->query("DELETE FROM dokumen WHERE id_info_doc = '$id'");
     $koneksi->query("DELETE FROM data_dokumen WHERE id_info_doc = '$id'");
+    $koneksi->query("DELETE FROM data_file_project WHERE id_info_doc = '$id'");
     $koneksi->query("DELETE FROM info_doc WHERE id_info_doc = '$id'");
     $koneksi->query("DELETE FROM downloads WHERE id_info_doc = '$id'");
     $koneksi->query("DELETE FROM komentar WHERE id_info_doc = '$id'");
+    $koneksi->query("DELETE FROM views WHERE id_info_doc = '$id'");
     
     echo "<script>location='?p=dokumen&aksi=seeall';</script>";
 }
@@ -288,6 +296,7 @@ if(isset($_GET['jurnal']) && isset($_GET['act'])){
     }
     $koneksi->query("DELETE FROM jurnal WHERE id_jurnal = '$jurnal'");
     $koneksi->query("DELETE FROM downloads WHERE id_jurnal = '$jurnal'");
+    $koneksi->query("DELETE FROM views WHERE id_jurnal = '$jurnal'");
     echo "<script>location='?p=dokumen&aksi=seeall';</script>";
 }
 ?>

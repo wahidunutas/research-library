@@ -32,305 +32,58 @@
 </div><hr>
 <?php
 $abj = $_GET['abj'];
-if($abj == ""){
+
+if($abj){
+    // sql penulis 1
+    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE '$abj%' ORDER BY nama_penulis ASC";
+    $result = mysqli_query($koneksi,$sql);
+
+    // sql penulis 2
+    $sql2 = "SELECT DISTINCT nama_penulis_2 FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui'  AND nama_penulis_2 LIKE '$abj%'";
+    $result2 = mysqli_query($koneksi,$sql2);
+    
+    if(mysqli_num_rows($result) > 0){
+        foreach($result as $data){?>
+            <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
+            <?php
+        }
+    }elseif(mysqli_num_rows($result2) > 0){
+        foreach($result2 as $data2){
+            if(!empty($data2['nama_penulis_2'])){
+                echo'
+                <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author2='.$data2['nama_penulis_2'].'">'.$data2['nama_penulis_2'].'</a>&nbsp;&nbsp;&nbsp';
+            }else{
+                echo'';
+            }
+        }
+        
+    }else{
+        echo'Data tidak ada';
+    }
+    
+}else{
     $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' ORDER BY nama_penulis ASC";
     $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){?>
-        
-        <?php
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }
-}elseif($abj == "a"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'a%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){?>
-        <!-- <i class="fas fa-angle-left"></i> <a href="?p=auth">back</a> <br> -->
-        <?php
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "b"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'b%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
     if(mysqli_num_rows($result) > 0){
         foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
+            <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
+            <?php
+        }
+        $sql2 = $koneksi->query("SELECT DISTINCT nama_penulis_2 FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' ");
+        while($pen2 = $sql2->fetch_assoc()){
+            if(!empty($pen2['nama_penulis_2'])){
+                echo'
+                <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author2='.$pen2['nama_penulis_2'].'">'.$pen2['nama_penulis_2'].'</a>&nbsp;&nbsp;&nbsp';
+            }else{
+                echo'';
+            }
         }
     }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "c"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'c%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "d"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'd%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "e"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'e%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "f"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'f%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "g"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'g%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "h"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'h%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "i"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'i%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "j"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'j%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "k"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'k%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "l"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'l%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "m"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'm%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "n"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'n%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "o"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'o%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "p"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'p%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "q"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'q%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "r"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'r%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "s"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 's%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "t"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 't%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "u"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'u%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "v"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'v%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "w"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'w%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "x"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'x%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "y"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'y%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
-    }
-}elseif($abj == "z"){
-    $sql = "SELECT DISTINCT nama_penulis FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc WHERE status_doc='Disetujui' AND nama_penulis LIKE 'z%' ORDER BY nama_penulis ASC";
-    $result = mysqli_query($koneksi,$sql);
-    if(mysqli_num_rows($result) > 0){
-        foreach($result as $data){?>
-        <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
-        <?php
-        }
-    }else{
-        echo "Tidak Ada Data";
+        echo'Data tidak ada';
     }
 }
+
+
+
 
 ?>

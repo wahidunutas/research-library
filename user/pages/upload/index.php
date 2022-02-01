@@ -109,17 +109,16 @@
                         </div>
                         <div class="form-group">
                             <label>Abstrak</label>
-                            <!-- <textarea id="summernote" name="abstrak" placeholder="isi abstrak" ></textarea> -->
                             <textarea class="ckeditor" id="ckedtor" name="abstrak"></textarea>
                         </div>
                         <div class="form-group">
                             <label>Daftar Pustaka</label>
-                            <!-- <textarea id="summernote2" name="dafpus" placeholder="isi daftar pustaka" ></textarea> -->
                             <textarea class="ckeditor" id="ckedtor" name="dafpus"></textarea>
                         </div>
 
                         <div class="form-group dsn">
                             <?php if ($_SESSION["role"] == "dosen") {
+                                echo '';
                             } else {
                                 echo '
                                 <label>Dosen Pembimbing</label>
@@ -165,7 +164,6 @@
 
                         <div class="form-group">
                             <label>Deskripsi</label>
-                            <!-- <textarea id="deskripsi" name="deskripsi" ></textarea> -->
                             <textarea class="ckeditor" id="ckedtor" name="deskripsi"></textarea>
                         </div>
                         <div class="form-group">
@@ -209,23 +207,20 @@
                     </div>
                 </div>
             </div>
-            <div class="card">
+            <div class="card" id="upf2">
                 <div class="card-header"><b>Upload File Projects
-                    <!-- <div class="bouncing-arrow">
-                        <i class="fas fa-question-circle" type="button" data-toggle="modal" data-target="#question"></i>
-                    </b>
-                    </div> -->
                 </div>
                 <div class="card-body">
                     <div class="form-group">
                         <label><small>File Project [.zip]</small><label>
-                        <input type="file" class="form-control" name="file-projek" required>
+                        <input type="file" class="form-control" name="file-projek" >
 
-                        <label class="mt-3"><small>File Database</small></label>
+                        <label class="mt-3"><small>File Database <i>[kosongkan jika tidak ada]</i></small></label>
                         <input type="file" class="form-control " name="file-database" >
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
 </form>
@@ -278,6 +273,7 @@ if (isset($_POST['save'])) {
     $status = $_POST['status'];
     $jurusan = $_POST['jurusan'];
     $dafpus = $_POST['dafpus'];
+
     // file projects
     $fprojek = $_FILES['file-projek']['name'];
     $locationFile = $_FILES['file-projek']['tmp_name'];
@@ -308,14 +304,27 @@ if (isset($_POST['save'])) {
             ";
         return false;
     }
+    if(!in_array($eks, $fileValid)){
+        echo"
+         <script>
+        Swal.fire(
+            'Opss!',
+            'Pastikan File Yang Anda Upload Berekstensi ZIP',
+            'error'
+            )
+            </script>
+            ";
+        return false;
+        
+    }
     $namedFile = uniqid();
     $namedFile .= '.';
     $namedFile .= $ekstensiFile;
-    // move_uploaded_file($lokasifile[0], "dokumen/" . $namedFile[0]);
+
     $sqltipe = $koneksi->query("SELECT * FROM tipe WHERE nama_tipe = 'Laporan Penelitian'");
     $result = $sqltipe->fetch_assoc();
-    // var_dump($result);
 
+    // tipe laporan penelitian
     if (isset($tipe) == $result) {
         if (empty($judul && $tipe && $abstrak && $dafpus && $jurusan && $fakultas)) {
             echo "<script>
@@ -325,7 +334,6 @@ if (isset($_POST['save'])) {
             'error'
             );
             </script>";
-            // echo "<meta http-equiv='refresh' content='1;url=?page=upload'>";
         } else {
 
             $x = $koneksi->query("INSERT INTO info_doc(id_info_doc, judul, nama_penulis, nama_penulis_2, id_tipe, id_fakultas, id_jurusan, dospem, dospem_2, abstrak, dafpus)VALUE('', '$judul', '$nama', '$nama2', '$tipe', '$fakultas', '$jurusan', '$dospem', '$dospem2', '$abstrak', '$dafpus')");
@@ -356,7 +364,7 @@ if (isset($_POST['save'])) {
             echo "<meta http-equiv='refresh' content='1;url=?page=data'>";
         }
     } else {
-        if (empty($judul && $tipe && $abstrak && $dafpus && $jurusan && $fakultas && $dospem)) {
+        if (empty($judul && $tipe && $nama && $abstrak && $dafpus && $dospem && $jurusan && $fakultas )) {
             echo "<script>
             Swal.fire(
                 'Pastikan Data Telah Terisi Semua',
@@ -364,7 +372,7 @@ if (isset($_POST['save'])) {
                 'error'
             );
             </script>";
-            // echo "<meta http-equiv='refresh' content='1;url=?page=upload'>";
+            return false;
         } else {
 
             $x = $koneksi->query("INSERT INTO info_doc(id_info_doc, judul, nama_penulis, nama_penulis_2, id_tipe, id_fakultas, id_jurusan, dospem, dospem_2, abstrak, dafpus)VALUE('', '$judul', '$nama', '$nama2', '$tipe', '$fakultas', '$jurusan', '$dospem', '$dospem2', '$abstrak', '$dafpus')");

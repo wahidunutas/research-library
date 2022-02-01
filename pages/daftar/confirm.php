@@ -25,7 +25,10 @@
             $user = mysqli_fetch_assoc($result);
             $id = $user['id_akses'];
 
-            $sql = "UPDATE akses SET is_verif = 1 WHERE id_akses = '$id' ";
+            $sql = "UPDATE akses SET
+            is_verif = 1,
+            is_confirm = 1
+            WHERE id_akses = '$id' ";
             $query = mysqli_query($koneksi, $sql);
             if ($query) {
                 echo "

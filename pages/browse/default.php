@@ -20,7 +20,13 @@ $sql_def_run = mysqli_query($koneksi,$sql_def);?>
             foreach($sql_def_run as $default){?>
             <li class="list-group-item">
                 <a href="index.php?p=dokumen&id=<?= $default['id_info_doc'];?>"><h6 class="mt-0 text-capitalize"><i class="fas fa-angle-right"></i> <?= $default['judul'];?></h6></a>
-                <small><?= $default['nama_penulis'];?> | <?=$default['nama_tipe'];?> | <?=$default['tgl_upload'];?> | <?= $default['fakul'];?> > <?= $default['jur'];?> 
+                <small><?php
+                        if(empty($default['nama_penulis_2'])){
+                            echo $default['nama_penulis'];
+                        }else{
+                            echo '1. '.$default['nama_penulis'].', 2. '.$default['nama_penulis_2'];
+                        }
+                        ?> | <?=$default['nama_tipe'];?> | <?=$default['tgl_upload'];?> | <?= $default['fakul'];?> > <?= $default['jur'];?> 
                 <?php 
                 if(!empty($default['dospem'] )){
                     echo '| 1. '.$default['dospem'].',&nbsp;&nbsp;';

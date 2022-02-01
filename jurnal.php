@@ -190,7 +190,7 @@
 
             </div>
             <div class="col">
-                <div class="card">
+                <div class="card shadow">
                     <div class="card-header">Karya Ilmiah Terbaru</div>
                     <div class="card-body">
                         <?php
@@ -203,6 +203,30 @@
                             <li><a href="index.php?p=dokumen&id=<?= $kidata['id_info_doc']; ?>" class="karya-ilmiah-jurnal text-capitalize"><i class="fas fa-angle-right"></i> <?= $kidata['judul']; ?></li></a>
 
                         <?php } ?>
+                    </div>
+                </div>
+                <div class="card shadow mt-4">
+                    <div class="card-header">Paling Banyak Dibaca</div>
+                    <div class="card-body">
+                        <?php 
+                        
+                        $sql_don = $koneksi->query("SELECT id_info_doc, id_jurnal, judul, sum(jml) as jml FROM views GROUP BY id_views ORDER BY jml DESC LIMIT $limitStart,$limit");
+                        while($top = $sql_don->fetch_assoc()){
+                            echo'
+                            <li class="text-capitalize"> <i class="fas fa-angle-right"></i>'; 
+                            if($top['id_jurnal'] == 0){
+                                echo' <a href="index.php?p=dokumen&id='.$top['id_info_doc'].'">'.$top['judul'].'</a>';
+                            }elseif($top['id_info_doc'] == 0){
+                                echo'
+                                 <a href="index.php?p=bacajurnal&id='.$top['id_jurnal'].'">'.$top['judul'].'</a>
+                                ';
+                            }
+                            echo'
+                            </li>
+                            ';
+                        }
+                    
+                        ?>
                     </div>
                 </div>
             </div>

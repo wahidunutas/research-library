@@ -18,17 +18,36 @@ $sql = $koneksi->query("SELECT * FROM dokumen JOIN info_doc ON info_doc.id_info_
 $data = $sql->fetch_assoc();
 
 $datadoc = array();
-$sql_doc = $koneksi->query("SELECT * FROM data_dokumen WHERE id_doc = '$id'");
-while($dft = $sql_doc->fetch_assoc()){
+$sql_doc = $koneksi->query("SELECT * FROM data_dokumen WHERE id_info_doc = '$id'");
+while ($dft = $sql_doc->fetch_assoc()) {
     $datadoc[] = $dft;
 }
+
+$sqlZip = $koneksi->query("SELECT * FROM data_file_project WHERE id_info_doc = '$id'");
+$result = $sqlZip->fetch_assoc();
+$Fzip = $result['file_project'];
+
+// $datadoc = array();
+
 ?>
 <div class="card shadow">
     <div class="card-body">
         <table class="table">
             <tr>
-                <th>Nama Penulis</th>
-                <td><?= $data['nama_penulis'];?></td>
+                <?php 
+                if(!empty($data['nama_penulis'] )){
+                    echo '<th>Nama Penulis</th>
+                        <td>1. '.$data['nama_penulis'].'<br>';
+                        if(!empty($data['nama_penulis_2'])){
+                            echo'2. '.$data['nama_penulis_2'];
+                        }else{
+                            echo'';
+                        }
+                        '</td>';
+                }else{
+                    echo '';
+                }
+                ?> 
             </tr>
             <tr>
                 <th>Judul</th>
@@ -45,7 +64,7 @@ while($dft = $sql_doc->fetch_assoc()){
             <?php 
             if(!empty($data['dospem'] )){
                 echo '<th>DOSEN PEMBIMBING</th>
-                    <td>1. '.$data['dospem'].', <br>';
+                    <td>1. '.$data['dospem'].'<br>';
                     if(!empty($data['dospem_2'])){
                         echo'2. '.$data['dospem_2'];
                     }else{
@@ -100,17 +119,50 @@ while($dft = $sql_doc->fetch_assoc()){
                 </div>
             </div>
         </div>
-        <a class="btn btn-primary btn-sm" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+         <a class="btn btn-primary btn-sm" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
             Lihat Files
         </a>
         <div class="collapse" id="collapseExample">
-            <!-- <div class="card card-body"> -->
-                <ul class="list-group list-group-flush">
-                    <?php foreach ($datadoc as $key => $value):?>
-                        <a href="?p=dokumen&aksi=seepdf&id=<?= $value['id_data_dokumen'];?>"><li class="list-group-item"><i class="fas fa-angle-right"></i> <?= $value['files'];?></li></a>
-                    <?php endforeach ?>
-                </ul>
-            <!-- </div> -->
+            <ul class="list-group list-group-flush">
+            <a href="#" data-toggle="modal" data-target="#viewZip"><li class="list-group-item"><i class="fas fa-file-archive"></i>  <?= $result['file_project'];?></li></a>
+            <!-- file database -->
+            <?php
+            if(!empty($result['file_database'])){
+                echo'<a href="#"><li class="list-group-item"><i class="fas fa-database"></i> '.$result['file_database'].'</li></a>';
+            }else{
+                echo '';
+            }
+            ?>
+            <?php foreach ($datadoc as $key => $value) : ?>
+                <a href="?p=dokumen&aksi=lihatpdf&id=<?= $value['id_data_dokumen']; ?>">
+                    <li class="list-group-item"><i class="fas fa-angle-right"></i> <?= $value['files']; ?></li>
+                </a>
+            <?php endforeach; ?>
+            </ul>
+        </div>
+        <!-- view Zip -->
+        <div class="modal fade" id="viewZip" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><?= $Fzip ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                <?php   
+                    $zips = new ZipArchive();
+                    if ($zips->open('../user/dokumen/project/'.$Fzip) === true) {
+                        for ($i = 0; $i < $zips->numFiles; $i++) {
+                            echo '=> '.$zips->getNameIndex($i).'<br>';        
+                            
+                        }
+                    }
+                ?>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 </div>

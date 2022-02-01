@@ -63,7 +63,14 @@ if ($jurnal) {
                     </tr>
                     <tr>
                         <th>Posted By</th>
-                        <td>' . $datajurnal['posted_by'] . '</td>
+                        <td>';
+                        if(!empty($datajurnal['posted_by2'] )){
+                            echo '1. '.$datajurnal['posted_by'].'<br>2. '.$datajurnal['posted_by2'];
+                        }else{
+                            echo $datajurnal['posted_by'] ;
+                        }
+                        echo
+                        '</td>
                     </tr>
                     <tr>
                         <th>Tanggal Upload</th>
@@ -128,7 +135,14 @@ if ($jurnal) {
             <table class="table">
                 <tr>
                     <th>Nama Penulis</th>
-                    <td>' . $data['nama_penulis'] . '</td>
+                    <td>';
+                    if(!empty($data['nama_penulis_2'])){
+                        echo'1. '. $data['nama_penulis'].'<br>2. '.$data['nama_penulis_2'];
+                    }else{
+                        echo $data['nama_penulis'];
+                    }
+                    echo'
+                    </td>
                 </tr>
                 <tr>
                     <th>Judul</th>
@@ -149,31 +163,31 @@ if ($jurnal) {
                 <tr>
                     <th>Status</th>
                     <td><i>' . $data['status_doc'] . '</i>'; ?>
-    <?php
-    if ($data['status_doc'] == "Disetujui") {
-        echo '| <b>Tanggal Acc</b>&nbsp;<i>' . $data['tgl_acc'] . '</i>';
-    } else {
-        echo '';
-    }
-    echo '
-                    </td>
-                </tr>'; ?>
-    <?php
-    if (!empty($data['dospem'])) {
-        echo '<tr><th>Dosen Pembimbing</th>
-                        <td>1. ' . $data['dospem'] . ', <br>';
-        if (!empty($data['dospem_2'])) {
-            echo '2.' . $data['dospem_2'];
-        } else {
-            echo '';
-        }
-        '</td></tr><hr>';
-    } else {
-        echo '';
-    }
-    ?>
-    <?php
-    echo '
+            <?php
+            if ($data['status_doc'] == "Disetujui") {
+                echo '| <b>Tanggal Acc</b>&nbsp;<i>' . $data['tgl_acc'] . '</i>';
+            } else {
+                echo '';
+            }
+            echo '
+                            </td>
+                        </tr>'; ?>
+            <?php
+            if (!empty($data['dospem'])) {
+                echo '<tr><th>Dosen Pembimbing</th>
+                                <td>1. ' . $data['dospem'] . ', <br>';
+                if (!empty($data['dospem_2'])) {
+                    echo '2.' . $data['dospem_2'];
+                } else {
+                    echo '';
+                }
+                '</td></tr><hr>';
+            } else {
+                echo '';
+            }
+            ?>
+            <?php
+            echo '
                 <tr>
                     <th>Abstrak</th>
                     <td><a href="#" type="button" data-toggle="modal" data-target="#abstrak">Lihat Abstrak</a></td>
@@ -223,12 +237,12 @@ if ($jurnal) {
             <div class="collapse" id="collapseExample">
                 <!-- <div class="card card-body"> -->
                     <ul class="list-group list-group-flush">'; ?>
-    <?php foreach ($datadoc as $key => $value) : ?>
-        <a href="?p=dokumen&aksi=lihatpdf&id=<?= $value['id_data_dokumen']; ?>">
-            <li class="list-group-item"><i class="fas fa-angle-right"></i> <?= $value['files']; ?></li>
-        </a>
-    <?php endforeach; ?>
-<?php echo '
+                    <?php foreach ($datadoc as $key => $value) : ?>
+                        <a href="?p=dokumen&aksi=lihatpdf&id=<?= $value['id_data_dokumen']; ?>">
+                            <li class="list-group-item"><i class="fas fa-angle-right"></i> <?= $value['files']; ?></li>
+                        </a>
+                    <?php endforeach; ?>
+                    <?php echo '
                     </ul>
                 <!-- </div> -->
             </div>

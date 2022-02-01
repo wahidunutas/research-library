@@ -3,6 +3,19 @@ $id = $_GET['id'];
 $sql = $koneksi->query("SELECT * FROM jurnal JOIN tipe_jurnal ON tipe_jurnal.id_tipe_jurnal=jurnal.tipe_jurnal WHERE jurnal.id_jurnal = '$id'");
 $tampil = $sql->fetch_assoc();
 $dafpus = substr($tampil['daftar_pustaka'], 0, 300);
+
+if(isset($id)){
+    $forview = $tampil['judul'];
+    $views = $koneksi->query("SELECT * FROM views WHERE id_jurnal='$id'");
+    $Rviews = mysqli_num_rows($views);
+    
+    if($Rviews == 1){
+        $koneksi->query("UPDATE views SET jml=jml+1 WHERE id_jurnal='$id'");
+    }else{
+        $koneksi->query("INSERT INTO views(id_views, id_jurnal, judul, jml)VALUES('', '$id','$forview', jml+1)");
+    }
+}
+
 ?>
 
 
@@ -63,7 +76,14 @@ $dafpus = substr($tampil['daftar_pustaka'], 0, 300);
             <small>
                 <center>
                 <b>Tipe Jurnal :</b> <?= $tampil['nama_tipe_jurnal'];?> | 
-                <b>By :</b> <?= $tampil['posted_by'];?> | 
+                <b>By :</b> 
+                    <?php
+                    if(!empty($tampil['posted_by2'])){
+                        echo $tampil['posted_by'].', '.$tampil['posted_by2'];
+                    }else{
+                        echo $tampil['posted_by'];
+                    }
+                    ?> | 
                 <b>Tanggal :</b> <?= $tampil['tgl_upload_jurnal'];?>
                 </center>
             </small>

@@ -28,54 +28,75 @@
 	include 'PHPMailer-master/src/PHPMailer.php';
 	include 'PHPMailer-master/src/POP3.php';
 	include 'PHPMailer-master/src/SMTP.php';
+	error_reporting(0);
+	$idConfirm = $_GET['idConfirm'];
+	
+	if(!isset($idConfirm)){
+		$nama = $_POST['nama'];
+		$role = $_POST['role'];
+		$nip = $_POST['nip'];
+		$fakultas = $_POST['fakultas'];
+		$jurusan = $_POST['jurusan'];
+		$email = $_POST['email'];
+		$pw = $_POST['pw'];
+		$pw2 = $_POST['pw2'];
+		$code = md5($email . date('Y-m-d'));
+	
+		$sql = $koneksi->query("SELECT * FROM author WHERE email='$email'");
+		$cek = mysqli_num_rows($sql);
+		$sql2 = $koneksi->query("SELECT * FROM akses WHERE nip='$nip'");
+		$cek2 = mysqli_num_rows($sql2);
 
-	$nama = $_POST['nama'];
-	$role = $_POST['role'];
-	$nip = $_POST['nip'];
-	$fakultas = $_POST['fakultas'];
-	$jurusan = $_POST['jurusan'];
-	$email = $_POST['email'];
-	$pw = $_POST['pw'];
-	$pw2 = $_POST['pw2'];
-	$code = md5($email . date('Y-m-d'));
+		if ($pw !== $pw2) {
+			echo "<script>
+					Swal.fire({
+					icon: 'error',
+					title: 'Password Tidak Sesuai',
+					text: 'Pastikan Password Sesuai!'
+				})
+				</script>";
+			echo "<meta http-equiv='refresh' content='2;url=../../index.php?p=daftar'>";
+		} elseif ($cek == 1) {
+			echo "<script>
+					Swal.fire({
+					icon: 'error',
+					title: 'Email Sudah Terdaftar',
+					text: 'Gunakan Email Lain!'
+				})
+				</script>";
+			echo "<meta http-equiv='refresh' content='2;url=../../index.php?p=daftar'>";
+		} elseif ($cek2 == 1) {
+			echo "<script>
+					Swal.fire({
+					icon: 'error',
+					title: 'NIP Sudah Terdaftar',
+					text: 'Pastikan Nip Benar!'
+				})
+				</script>";
+			echo "<meta http-equiv='refresh' content='2;url=../../index.php?p=daftar'>";
+		} else {
+			$koneksi->query("INSERT INTO author(id_author, nama, email, jurusan, id_fakultas, alamat, no_telepon, status, img)VALUES('', '$nama', '$email', '$jurusan', '$fakultas', '', '', '$role', '')");
 
-	$sql = $koneksi->query("SELECT * FROM author WHERE email='$email'");
-	$cek = mysqli_num_rows($sql);
-	$sql2 = $koneksi->query("SELECT * FROM akses WHERE nip='$nip'");
-	$cek2 = mysqli_num_rows($sql2);
+			$id_author = $koneksi->insert_id;
+			$koneksi->query("INSERT INTO akses(id_akses, id_admin, id_author, nip, password, role, verif_code, is_verif)VALUES('', '', '$id_author', '$nip', '$pw', '$role', '$code', '')");
 
-	if ($pw !== $pw2) {
-		echo "<script>
+			echo "<script>
 				Swal.fire({
-				icon: 'error',
-				title: 'Password Tidak Sesuai',
-				text: 'Pastikan Password Sesuai!'
+				icon: 'success',
+				title: 'Register Berhasil',
+				text: 'Cek Email Secara Berkala Untuk Verifikasi'
 			})
 			</script>";
-		echo "<meta http-equiv='refresh' content='2;url=../../index.php?p=daftar'>";
-	} elseif ($cek == 1) {
-		echo "<script>
-				Swal.fire({
-				icon: 'error',
-				title: 'Email Sudah Terdaftar',
-				text: 'Gunakan Email Lain!'
-			})
-			</script>";
-		echo "<meta http-equiv='refresh' content='2;url=../../index.php?p=daftar'>";
-	} elseif ($cek2 == 1) {
-		echo "<script>
-				Swal.fire({
-				icon: 'error',
-				title: 'NIP Sudah Terdaftar',
-				text: 'Pastikan Nip Benar!'
-			})
-			</script>";
-		echo "<meta http-equiv='refresh' content='2;url=../../index.php?p=daftar'>";
-	} else {
-		$koneksi->query("INSERT INTO author(id_author, nama, email, jurusan, id_fakultas, alamat, no_telepon, status, img)VALUES('', '$nama', '$email', '$jurusan', '$fakultas', '', '', '$role', '')");
+			echo "<meta http-equiv='refresh' content='3;url=../../index.php?p=daftar'>";
+		}
+	}else{
+		$acc = $koneksi->query("SELECT * FROM akses JOIN author ON akses.id_author=author.id_author WHERE akses.id_akses = '$idConfirm'");
+		$result = $acc->fetch_assoc();
 
-		$id_author = $koneksi->insert_id;
-		$koneksi->query("INSERT INTO akses(id_akses, id_admin, id_author, nip, password, role, verif_code, is_verif)VALUES('', '', '$id_author', '$nip', '$pw', '$role', '$code', '')");
+		$nama = $result['nama'];
+		$email = $result['email'];
+		$codes = md5($email . date('Y-m-d'));
+
 
 		$mail = new PHPMailer();
 
@@ -134,7 +155,7 @@
 		// $mail->msgHTML(file_get_contents('?p=daftar&act=proses'), __DIR__);
 		$body = "
 			Hi," . $nama . "<br>
-			Silahkan Klik Tombol Dibawah Ini Untuk Verifikasi Email Kamu: <br><br> <button><a href='http://localhost/research_library/pages/daftar/confirm.php?code=" . $code . "'class='btn' style='style-decoration:none;'>Verifikasi</a></button><br><br>
+			Silahkan Klik Tombol Dibawah Ini Untuk Verifikasi Email Kamu: <br><br> <button><a href='http://localhost/research_library/pages/daftar/confirm.php?code=" . $codes . "'class='btn' style='style-decoration:none;'>Verifikasi</a></button><br><br>
 			<br>Salam Hormat,<br>
 			Admin Research Library";
 		$mail->Body = $body;
@@ -149,11 +170,11 @@
 			echo "<script>
 				Swal.fire({
 				icon: 'success',
-				title: 'Register Berhasil',
-				text: 'Silahkan Cek Email Untuk Verifikasi'
+				title: 'Notifikasi Berhasil Dikirim',
+				text: 'Notifikasi Telah Dikirim Ke Alamat $email'
 			})
 			</script>";
-			echo "<meta http-equiv='refresh' content='3;url=../../index.php?p=daftar'>";
+			echo "<meta http-equiv='refresh' content='3;url=../../admin/index.php?p=mahasiswa'>";
 			//Section 2: IMAP
 			//Uncomment these to save your message in the 'Sent Mail' folder.
 			#if (save_mail($mail)) {

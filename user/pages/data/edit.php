@@ -3,6 +3,14 @@ $id = $_GET['id'];
 $sql = $koneksi->query("SELECT * FROM data_dokumen JOIN info_doc ON info_doc.id_info_doc=data_dokumen.id_info_doc WHERE id_data_dokumen = '$id'");
 $data = $sql->fetch_assoc();
 
+$zip = $_GET['zip'];
+$sqlZip = $koneksi->query("SELECT * FROM data_file_project WHERE id_data_file='$zip'");
+$dataZip = $sqlZip->fetch_assoc();
+
+$db = $_GET['sql'];
+$sqlDb = $koneksi->query("SELECT * FROM data_file_project WHERE id_data_file ='$db'");
+$dataDb = $sqlDb->fetch_assoc();
+
 $jurnal = $_GET['jurnal'];
 $sqlJurnal = $koneksi->query("SELECT * FROM jurnal WHERE id_jurnal = '$jurnal'");
 $dataJurnal = $sqlJurnal->fetch_assoc();
@@ -38,6 +46,40 @@ if(isset($id)){
         </div>
     </div>
     ';
+}elseif(isset($zip)){
+     echo '
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <form action="" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="text" readonly value="'.$dataZip['file_project'].'" name="d" class="form-control">
+                        <input type="text" hidden value="'.$dataZip['file_project'].'" name="nama_zip_lama" class="form-control">
+                        <input type="hidden" value="'.$dataZip['id_data_file'].'" name="idZip">
+                    </div>
+                    <div class="form-group">
+                        <input type="file" name="fileZip" required>
+                    </div>      
+                        <button type="submit" class="btn btn-primary btn-sm" name="zip">Ubah</button>
+                        <a href="?page=data&act=kirimulang&id='.$dataZip['id_info_doc'].'" class="btn btn-danger btn-sm">Kembali</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <h4>File Sebelumnya</h4>'.$dataZip['file_project'].'<br>';
+            $zips = new ZipArchive();
+            $Fzip = $dataZip['file_project'];
+            if ($zips->open('dokumen/project/'.$Fzip) === true) {
+                for ($i = 0; $i < $zips->numFiles; $i++) {
+                    echo '=> '.$zips->getNameIndex($i).'<br>';     
+                }
+            }
+            echo'
+        </div>
+    </div>
+    ';
 }else{
     echo '
     <div class="row">
@@ -65,6 +107,7 @@ if(isset($id)){
         </div>
     </div>
     ';
+
 }
 ?>
 <?php
@@ -175,4 +218,52 @@ if(isset($_POST['jurnal'])){
         );
     </script>";
     echo"<meta http-equiv='refresh' content='2;url=?page=data&act=kirimulang&jurnal=$dataJurnal[id_jurnal]'>";
+}
+
+if(isset($_POST['zip'])){
+    $lcZip = $_FILES['fileZip']['tmp_name'];
+    $namaZip = $_FILES['fileZip']['name'];
+    $zipLama = $_POST['nama_zip_lama'];
+    $id = $_POST['idZip'];
+
+    $ekstensiV = ['zip'];
+    $ekstensi = explode('.', $namaZip);
+    $ekstensi = strtolower(end($ekstensi));
+
+    if(!empty($lcZip))
+    {
+        if( !in_array($ekstensi, $ekstensiV) ){
+            echo"
+            <script>
+            Swal.fire(
+                'Opss!',
+                'Pastikan Ekstensi Yang Di Upload ZIP',
+                'error'
+                )
+            </script>
+            ";
+            return false;
+        }
+        move_uploaded_file($lcZip, "dokumen/project/".$namaZip);
+        // unlink("dokumen/$foto_lama"); 
+        $koneksi->query("UPDATE data_file_project SET
+            file_project  = '$namaZip'
+            WHERE id_data_file = '$id'");
+
+        if (file_exists("dokumen/project/$zipLama")) {
+            unlink("dokumen/project/$zipLama");
+        }
+
+        echo"
+        <script>
+            Swal.fire(
+                'Data Berhasil Diubah',
+                '',
+                'success'
+            );
+        </script>";
+        echo"<meta http-equiv='refresh' content='2;url=?page=data&act=kirimulang&id=$dataZip[id_info_doc]'>";
+    }
+
+
 }

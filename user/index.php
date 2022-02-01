@@ -74,7 +74,7 @@ $_SESSION['start_session'] = time();
     // multi upload file
     $(document).ready(function(){
         $(".btn-tambah").on("click", function(){
-            $(".letak-input").append("<input type='file' class='form-control mt-1' name='doc[]' /> ");
+            $(".letak-input").append("<input type='file' class='form-control mt-1' name='doc[]' required/> ");
         })
     })
   }
@@ -122,17 +122,18 @@ $_SESSION['start_session'] = time();
         const named = $('#tipe option:selected').data('named');
         $('[name=names]').val(named); 
         if($('[name=names]').val() == 'Jurnal'){
-           $("#showtipe").show("fast");
-           $("#upf").hide("fast"); 
-           $("#master").hide("fast"); 
-           $("#jurnal").show("fast"); 
-           $("#showCover").show("fast");
-           $("#btn-jur").show("fast");
-            $("#btn-def").hide("fast");
-           
+          $("#showtipe").show("fast");
+          $("#upf").hide("fast"); 
+          $("#upf2").hide("fast");
+          $("#master").hide("fast"); 
+          $("#jurnal").show("fast"); 
+          $("#showCover").show("fast");
+          $("#btn-jur").show("fast");
+          $("#btn-def").hide("fast");
         }else{
           $("#showtipe").slideUp("fast");
           $("#upf").show("fast");
+          $("#upf2").show("fast");
           $("#master").show("fast"); 
           $("#jurnal").hide("fast"); 
           $("#showCover").hide("fast");

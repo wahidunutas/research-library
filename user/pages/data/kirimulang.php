@@ -41,7 +41,44 @@ if(isset($id)){
                     <div class="card-header">FILES</div>
                     <div class="card-body">
                         <ul class="list-group list-group-flush">';?>
-                            <?php 
+                            <?php
+                            $sqlZip = $koneksi->query("SELECT * FROM data_file_project WHERE id_info_doc = '$id'");
+                            $result = $sqlZip->fetch_assoc();
+                            if(empty($result['file_database'])){
+                                echo '<li class="list-group-item">'.$result['file_project'].'
+                                    <a href="?page=data&act=edit&zip='.$result['id_data_file'].'">edit</a></li>';
+                            }else{
+                                echo'
+                                <li class="list-group-item">'.$result['file_project'].'
+                                <a href="?page=data&act=edit&zip='.$result['id_data_file'].'">edit</a></li> 
+                                <li class="list-group-item">'.$result['file_database'].'
+                                <a href="#" data-toggle="modal" data-target="#editDb">edit</a></li>
+                                
+                                
+                                <div class="modal fade" id="editDb" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form method="post" enctype="multipart/form-data">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="staticBackdropLabel">Ubah File Database</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="text" name="dbLama" value="'.$result['file_database'].'" class="form-control mb-2" readonly>
+                                                    <input type="file" name="database">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" name="ubahDb" class="btn btn-primary">Simpan</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                ';
+                            }
+                            
                             $sql_data = $koneksi->query("SELECT *  FROM info_Doc JOIN data_dokumen ON data_dokumen.id_info_doc=info_doc.id_info_doc WHERE data_dokumen.id_info_doc = '$id'");
                             while($tampil = $sql_data->fetch_assoc()){
                             ?>
@@ -77,8 +114,18 @@ if(isset($id)){
                         </div>
                         <HR>
                         <b>NAMA PENULIS</b>
-                        <div class="form-group">
+                        <div class="form-group">';
+                        if(empty($data['nama_penulis_2'])){
+                            echo'
                             <input type="text" class="form-control" name="penulis" value="'.$data['nama_penulis'].'">
+                            ';
+                        }else{
+                            echo'
+                            <input type="text" class="form-control mb-1" name="penulis" value="'.$data['nama_penulis'].'">
+                            <input type="text" class="form-control" name="penulis2" value="'.$data['nama_penulis_2'].'">
+                            ';
+                        }
+                        echo'
                         </div>
                         <hr>
                         <b>TIPE</b>';?>
@@ -104,21 +151,28 @@ if(isset($id)){
                         <hr>
                         <b>Fakultas</b>
                         <p>'.$data['fakul'].' -> '.$data['jur'].'</p>
-                        <hr>';?>
-                        <?php
-                        if(!empty($data['dospem'])){
+                        <hr>
+                        <b>DOSEN PEMBIMBING</b>';
+                        
+                        if(empty($data['dospem_2'])){
                             echo '
-                            <b>DOSEM PEMBIMBING</b>
                             <div class="form-group">
                                 <input type="text" class="form-control" name="dospem" value="'. $data['dospem'].'">
                             </div>
-                            <hr>
                             ';
                         }else{
-                            echo '';
+                            echo '
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="dospem" value="'. $data['dospem'].'">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="dospem2" value="'. $data['dospem_2'].'">
+                            </div>
+                            ';
                         }
-                        ?>
-                        <?php echo'
+                        
+                        echo'
+                        <hr>
                         <b>ABSTRAK</b>
                         <div class="form-group">
                             <textarea id="summernote" name="abstrak" placeholder="isi abstrak" required>'. $data['abstrak'].'</textarea>
@@ -187,8 +241,16 @@ if(isset($id)){
                         </div>
                         <HR>
                         <b>PENULIS</b>
-                        <div class="form-group">
-                            <input type="text" class="form-control" name="penulis" value="'.$dataJurnal['posted_by'].'" readonly>
+                        <div class="form-group">';
+                            if(!empty($dataJurnal['posted_by2'])){
+                                echo'
+                                <input type="text" class="form-control mb-2" name="penulis" value="'.$dataJurnal['posted_by'].'" >
+                                <input type="text" class="form-control" name="penulis2" value="'.$dataJurnal['posted_by2'].'" >
+                                ';
+                            }else{
+                                echo'<input type="text" class="form-control" name="penulis" value="'.$dataJurnal['posted_by'].'" >';
+                            }
+                            echo'
                         </div>
                         <hr>';?>
                         <?php
@@ -197,6 +259,7 @@ if(isset($id)){
                                 $tipe_data[] = $sqldata;
                             }
                             echo'
+                            <b>Tipe Jurnal</b>
                             <div class="form-group">
                                 <select class="form-control" name="tipe_jurnal">';?>
                                     <?php foreach($tipe_data as $tipe):?>
@@ -217,7 +280,7 @@ if(isset($id)){
                         </div>
                         <b>DAFTAR PUSTAKA</b>
                         <div class="form-group">
-                             <textarea class="ckeditor" id="ckedtor" name="dafpus">'. $dataJurnal['daftar_pustaka'].'</textarea>
+                            <textarea class="ckeditor" id="ckedtor" name="dafpus">'. $dataJurnal['daftar_pustaka'].'</textarea>
                         </div>
                     </div>
                     <div class="card-footer">
@@ -236,7 +299,9 @@ if(isset($_POST['ubah-file'])){
 
     $judul = $_POST['judul'];
     $penulis = $_POST['penulis'];
+    $penulis2 = $_POST['penulis2'];
     $dopem = $_POST['dospem'];
+    $dopem2 = $_POST['dospem2'];
     $abstrak = $_POST['abstrak'];
     $dafpus = $_POST['dafpus'];
     
@@ -244,7 +309,9 @@ if(isset($_POST['ubah-file'])){
     $koneksi->query("UPDATE info_doc SET
         judul = '$judul',
         nama_penulis = '$penulis',
+        nama_penulis_2 = '$penulis2',
         dospem = '$dopem',
+        dospem_2 = '$dopem2',
         abstrak = '$abstrak',
         dafpus = '$dafpus'
         WHERE id_info_doc = '$id'
@@ -267,7 +334,8 @@ if(isset($_POST['ubah-file'])){
     echo"<meta http-equiv='refresh' content='2;url=?page=data'>";
 }
 if(isset($_POST['ubah-file-jurnal'])){
-
+    $nama = $_POST['penulis'];
+    $nama2 = $_POST['penulis2'];
     $link = $_POST['link'];
     $judul = $_POST['judul'];
     $desc = $_POST['deskripsi'];
@@ -280,6 +348,8 @@ if(isset($_POST['ubah-file-jurnal'])){
         judul = '$judul',
         deskripsi = '$desc',
         daftar_pustaka = '$dafpus',
+        posted_by = '$nama',
+        posted_by2 = '$nama2',
         link = '$link',
         status_jurnal = 'Pending',
         note = ''
@@ -295,5 +365,50 @@ if(isset($_POST['ubah-file-jurnal'])){
         );
     </script>";
     echo"<meta http-equiv='refresh' content='2;url=?page=data'>";
+}
+
+if(isset($_POST['ubahDb'])){
+    $dbLama = $_POST['dbLama'];
+    $db = $_FILES['database']['name'];
+    $locDb = $_FILES['database']['tmp_name'];
+
+    $ekstensiDb = ['sql'];
+    $ekstensi = explode('.', $db);
+    $ekstensi = strtolower(end($ekstensi));
+
+    if(!empty($locDb)){
+        if(!in_array($ekstensi, $ekstensiDb)){
+            echo"
+            <script>
+            Swal.fire(
+                'Opss!',
+                'Pastikan File Berekstensi .SQL',
+                'error'
+                )
+            </script>
+            ";
+            return false;
+        }else{
+            move_uploaded_file($locDb, "dokumen/project/".$db);
+
+            $koneksi->query("UPDATE data_file_project SET
+                            file_database = '$db'
+                            WHERE id_info_doc = '$id'");
+            if(file_exists("dokumen/project/$dbLama")){
+                unlink("dokumen/project/$dbLama");
+            }
+            
+            echo"
+            <script>
+                Swal.fire(
+                    'Data Berhasil Diubah',
+                    '',
+                    'success'
+                );
+            </script>";
+            echo"<meta http-equiv='refresh' content='2;url=?page=data&act=kirimulang&id=$id'>";
+        }
+
+    }
 }
 ?>

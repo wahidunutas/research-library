@@ -43,8 +43,27 @@ if(isset($id)){
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">FILES</div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">';?>
+                    <div class="card-body">';
+                        $zip = $koneksi->query("SELECT * FROM data_file_project WHERE id_info_doc = '$id'");
+                        $result = $zip->fetch_assoc();
+                        $Fzip = $result['file_project'];
+                        echo'
+                        <ul class="list-group list-group-flush">
+                            <a href="#" data-toggle="modal" data-target="#viewZip"> 
+                            <li class="list-group-item">
+                                <i class="fas fa-file-archive"></i> '.$result['file_project'].'
+                            </li>
+                            </a>';
+                            if(!empty($result['file_database'])){
+                                echo'
+                                <a href="#"> 
+                                <li class="list-group-item">
+                                    <i class="fas fa-database"></i> '.$result['file_database'].'
+                                </li>
+                                </a>';
+                            }else{
+                                echo'';
+                            }?>
                             <?php foreach ($datadoc as $key => $value) : ?>
                                 <a href="?page=data&act=lihat&id=<?= $value['id_data_dokumen'];?>">
                                     <li class="list-group-item"><i class="fas fa-angle-right"></i> <?= $value['files'];?></li>
@@ -54,6 +73,28 @@ if(isset($id)){
                         echo'
                         </ul>
                     </div>
+                </div>
+                <div class="modal fade" id="viewZip" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">'.$Fzip.'</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">';
+                    $zips = new ZipArchive();
+                    if ($zips->open('dokumen/project/'.$Fzip) === true) {
+                        for ($i = 0; $i < $zips->numFiles; $i++) {
+                            echo '=> '.$zips->getNameIndex($i).'<br>';        
+                            
+                        }
+                    }
+                    echo'
+                    </div>
+                    </div>
+                </div>
                 </div>
                 <p>
                     <a href="#komen" class="text-sm" data-toggle="collapse">
@@ -115,7 +156,14 @@ if(isset($id)){
                         <p>'.$data['judul'].'</p>
                         <HR>
                         <b>NAMA PENULIS</b>
-                        <p>'.$data['nama_penulis'] .'</p>
+                        <p>';
+                        if(!empty($data['nama_penulis_2'])){
+                            echo '1. '.$data['nama_penulis'].'<br>2. '.$data['nama_penulis_2'];
+                        }else{
+                            echo $data['nama_penulis'];
+                        }
+                        echo'
+                        </p>
                         <hr>
                         <b>TIPE</b>
                         <p>'.$data['nama_tipe'] .'</p>
@@ -125,7 +173,7 @@ if(isset($id)){
                         ';?>
                         <?php if(!empty($data['dospem'] )){
                             echo '<b>DOSEN PEMBIMBING</b>
-                                <p>1. '.$data['dospem'].', <br>';
+                                <p>1. '.$data['dospem'].'<br>';
                                 if(!empty($data['dospem_2'])){
                                     echo'2. '.$data['dospem_2'];
                                 }else{
@@ -160,7 +208,7 @@ if(isset($id)){
                             </div>
                         </div>
                     </div>
-                     <div class="modal fade" id="dafpus" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="dafpus" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -202,10 +250,10 @@ if(isset($id)){
                 <div class="card-header">
                     Status : ';?>
                     <?php
-                        if($dataJurnal['status'] == 'Disetujui'){
-                            echo '<span class="badge badge-success">Telah Dipublish</span>';
-                        }elseif($dataJurnal['status'] == 'Ditolak'){
-                             echo '<span class="badge badge-warning">Di Tolak</span>';
+                        if($dataJurnal['status_jurnal'] == 'Disetujui'){
+                            echo '<span class="badge badge-success">Di Setujui</span>';
+                        }elseif($dataJurnal['status_jurnal'] == 'Tidak Disetujui'){
+                            echo '<span class="badge badge-warning">Di Tolak</span>';
                         }else{
                             echo '<span class="badge badge-danger">Pending</span>';
                         }
@@ -217,7 +265,14 @@ if(isset($id)){
                     <p>'.$dataJurnal['judul'].'</p>
                     <HR>
                     <b>Uploaded</b>
-                    <p>'.$dataJurnal['posted_by'] .'</p>
+                    <p>';
+                    if(!empty($dataJurnal['posted_by2'])){
+                        echo '1. '. $dataJurnal['posted_by'].'<br>2. '.$dataJurnal['posted_by2'];
+                    }else{
+                        echo $dataJurnal['posted_by'];
+                    }
+                    echo
+                    '</p>
                     <hr>
                     <b>Tipe Jurnal</b>
                     <p>'.$dataJurnal['nama_tipe_jurnal'] .'</p>
@@ -268,4 +323,3 @@ if(isset($id)){
     ';
 }
 ?>
-<!--  -->

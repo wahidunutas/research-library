@@ -1,6 +1,7 @@
 <?php
 $id = $_GET['id'];
 
+// query karya ilmiah
 $sql = $koneksi->query("SELECT * FROM info_doc JOIN dokumen ON dokumen.id_info_doc=info_doc.id_info_doc JOIN tipe ON tipe.id_tipe=info_doc.id_tipe JOIN fakultas ON fakultas.id_fakultas=info_doc.id_fakultas JOIN jurusan ON jurusan.id_jurusan=info_doc.id_jurusan JOIN admin ON admin.id_admin=dokumen.id_admin WHERE info_doc.id_info_doc='$id' ");
 $run = $sql->fetch_assoc();
 $dafpus = substr($run['dafpus'], 0, 400) . '...';
@@ -19,8 +20,9 @@ if(isset($id)){
 }
 // $koneksi->query("INSERT FROM views(id_views, id_info_doc, judul, jml)VALUE('', '$id', '', '')")
 
+// LIMIT JUMLAH YANG PALING BANYA DIBACA/DOWNLOAD
 $hal = (isset($_GET['hal'])) ? (int) $_GET['hal'] : 1;
-$limit = 2;
+$limit = 5;
 $limitStart = ($hal - 1) * $limit;
 
 $datadoc = array();
@@ -34,6 +36,9 @@ $sql_not_se = $koneksi->query("SELECT * FROM data_dokumen WHERE id_info_doc = '$
 while ($not_login = $sql_not_se->fetch_assoc()) {
     $data[] = $not_login;
 }
+
+$zip = $koneksi->query("SELECT * FROM data_file_project JOIN info_doc ON info_doc.id_info_doc=data_file_project.id_info_doc WHERE data_file_project.id_info_doc = '$id'");
+$result = $zip->fetch_assoc();
 
 ?>
 <!-- <div class="container"> -->
@@ -83,7 +88,15 @@ while ($not_login = $sql_not_se->fetch_assoc()) {
                             <tbody>
                                 <tr>
                                     <th>Author</th>
-                                    <td><?= $run['nama_penulis']; ?></td>
+                                    <td>
+                                        <?php
+                                        if(empty($run['nama_penulis_2'])){
+                                            echo $run['nama_penulis'];
+                                        }else{
+                                            echo '1. '.$run['nama_penulis'].'<br> 2. '.$run['nama_penulis_2'];
+                                        }
+                                        ?>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Type</th>
@@ -185,6 +198,20 @@ while ($not_login = $sql_not_se->fetch_assoc()) {
 
                     <?php } else { ?>
                         <li class="list-group-item "><i class="fas fa-file-pdf"></i> FILES</li>
+                        <?php
+                        if(!empty($result['file_database'])){
+                            echo'
+                                <li class="list-group-item"><img src="zip.png" style="width:30px"> '.$result['file_project'].' | <a href="pages/dokumen/download.php?zip='.$result['file_project'].'&id='.$result['id_info_doc'].'&judul='.$result['judul'].'"><i class="fas fa-download"></i> Donwload Zip</a></li>  
+                                
+                                <li class="list-group-item"><img src="sql.jpg" style="width:30px"> '.$result['file_database'].' | <a href="pages/dokumen/download.php?sql='.$result['file_database'].'&id='.$result['id_info_doc'].'&judul='.$result['judul'].'"><i class="fas fa-download"></i> Donwload Database</a></li>  
+                            ';
+                        }else{
+                            echo'
+                                <li class="list-group-item"><img src="zip.png" style="width:30px"> '.$result['file_project'].' | <a href="pages/dokumen/download.php?zip='.$result['file_project'].'&id='.$result['id_info_doc'].'&judul='.$result['judul'].'"><i class="fas fa-download"></i> Donwload Zip</a></li>                            
+                            ';
+                        }
+                        ?>
+
                         <?php foreach ($datadoc as $value) { ?>
                             <a href="pdf.php?id=<?= $value['id_data_dokumen']; ?>" target="_BLANK">
                                 <li class="list-group-item"><img src="pdf.png" style="width:30px"> <?= $value['files']; ?>
@@ -211,16 +238,15 @@ while ($not_login = $sql_not_se->fetch_assoc()) {
             <div class="card-body">
                 <!-- <ul> -->
                 <?php
-                $sql_don = $koneksi->query("SELECT id_info_doc, id_jurnal, judul, sum(jml) as jml FROM downloads GROUP BY id ORDER BY jml DESC");
+                $sql_don = $koneksi->query("SELECT id_info_doc, id_jurnal, judul, sum(jml) as jml FROM downloads GROUP BY id ORDER BY jml DESC LIMIT $limitStart, $limit");
                 while ($top = $sql_don->fetch_assoc()) {
-                    $jdl = substr($top['judul'], 0, 40) . '..';
                     echo '
                             <li class="text-capitalize"> <i class="fas fa-angle-right"></i>';
                     if ($top['id_jurnal'] == 0) {
-                        echo ' <a href="index.php?p=dokumen&id=' . $top['id_info_doc'] . '">' . $jdl . ' (' . $top['jml'] . ')</a>';
+                        echo ' <a href="index.php?p=dokumen&id=' . $top['id_info_doc'] . '">' . $top['judul'] . ' (' . $top['jml'] . ')</a>';
                     } elseif ($top['id_info_doc'] == 0) {
                         echo '
-                                 <a href="index.php?p=bacajurnal&id=' . $top['id_jurnal'] . '">' . $jdl . ' (' . $top['jml'] . ')</a>
+                                 <a href="index.php?p=bacajurnal&id=' . $top['id_jurnal'] . '">' . $top['judul'] . ' (' . $top['jml'] . ')</a>
                                 ';
                     }
                     echo '
@@ -234,16 +260,16 @@ while ($not_login = $sql_not_se->fetch_assoc()) {
             <div class="card-header">Paling Banyak Dibaca</div>
             <div class="card-body">
                 <?php 
-                $sql_don = $koneksi->query("SELECT id_info_doc, id_jurnal, judul, sum(jml) as jml FROM views GROUP BY id_views ORDER BY jml DESC");
+                $sql_don = $koneksi->query("SELECT id_info_doc, id_jurnal, judul, sum(jml) as jml FROM views GROUP BY id_views ORDER BY jml DESC LIMIT $limitStart, $limit");
                 while($top = $sql_don->fetch_assoc()){
                     $jdl = substr($top['judul'], 0, 40).'...';
                     echo'
                     <li class="text-capitalize"> <i class="fas fa-angle-right"></i>'; 
                     if($top['id_jurnal'] == 0){
-                        echo' <a href="index.php?p=dokumen&id='.$top['id_info_doc'].'">'.$jdl.'</a>';
+                        echo' <a href="index.php?p=dokumen&id='.$top['id_info_doc'].'">'.$top['judul'].'</a>';
                     }elseif($top['id_info_doc'] == 0){
                         echo'
-                            <a href="index.php?p=bacajurnal&id='.$top['id_jurnal'].'">'.$jdl.'</a>
+                            <a href="index.php?p=bacajurnal&id='.$top['id_jurnal'].'">'.$top['judul'].'</a>
                         ';
                     }
                     echo'

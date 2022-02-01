@@ -67,16 +67,24 @@
                         <td><?= $data['nip']; ?></td>
                         <td><?= $data['email']; ?></td>
                         <td>
-                            <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#detailmhs<?= $data['id_author']; ?>"><i class="fas fa-eye"></i></a>
-
-                            <a href="?p=mahasiswa&aksi=updatemhs&id=<?= $data['id_author']; ?>" class="btn btn-primary btn-sm"><i class="fas fa-user-edit"></i></a>
-
-                            <a href="?p=mahasiswa&act=del&id=<?= $data['id_author']; ?>" class="btn btn-danger btn-sm btn-del"><i class="fas fa-trash"></i></a>
-
+                            <?php
+                            if($data['is_confirm'] !== '1'){
+                                echo'
+                                <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#detailmhs'.$data['id_author'].'"><i class="fas fa-eye"></i></a>
+                                ';
+                            }else{
+                                echo'
+                                    <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#detailmhs'.$data['id_author'].'"><i class="fas fa-eye"></i></a>
+                                    <a href="?p=mahasiswa&aksi=updatemhs&id='.$data['id_author'].'" class="btn btn-primary btn-sm"><i class="fas fa-user-edit"></i></a>
+        
+                                    <a href="?p=mahasiswa&act=del&id='.$data['id_author'].'" class="btn btn-danger btn-sm btn-del"><i class="fas fa-trash"></i></a>
+                                ';
+                            }
+                            ?>
                         </td>
                     </tr>
                 </tbody>
-                <!-- Modal Update Dosen-->
+                <!-- Modal Update mahasiswa-->
                 <div class="modal fade" id="detailmhs<?= $data['id_author']; ?>" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -136,6 +144,14 @@
                                             echo ' <img src="dist/img/no image.jpg" alt="" style="width:240px;" id="uploadPreviewDB">';
                                         } else {
                                             echo ' <img src="../user/image_user/' . $data['img'] . '" alt="" style="width:240px;" id="uploadPreviewDB">';
+                                        }
+
+                                        if($data['is_confirm'] !== '1'){
+                                            echo '
+                                            <a href="../pages/daftar/daftarProses.php?idConfirm='.$data['id_akses'].'" class="btn btn-primary">Confirmasi</a>
+                                            ';
+                                        }else{
+                                            echo'';
                                         }
                                         ?>
 

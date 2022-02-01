@@ -23,7 +23,15 @@ $data = $sql->fetch_assoc();
         <table class="table">
             <tr>
                 <th>Upload BY</th>
-                <td><?= $data['posted_by'];?></td>
+                <td>
+                    <?php
+                    if(!empty($data['posted_by2'])){
+                        echo '1. '.$data['posted_by'].'<br>2. '.$data['posted_by2'];
+                    }else{
+                        echo $data['posted_by'];
+                    }
+                    ?>
+                </td>
             </tr>
             <tr>
                 <th>Judul</th>
