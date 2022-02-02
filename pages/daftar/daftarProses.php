@@ -156,7 +156,7 @@
 		// $mail->msgHTML(file_get_contents('?p=daftar&act=proses'), __DIR__);
 		$body = "
 			Hi," . $nama . "<br>
-			Silahkan Klik Tombol Dibawah Ini Untuk Verifikasi Email Kamu: <br><br> <button><a href='http://localhost/research_library/research_library/pages/daftar/confirm.php?code=" . $codes . "'class='btn' style='style-decoration:none;'>Verifikasi</a></button><br><br>
+			Silahkan Klik Tombol Dibawah Ini Untuk Verifikasi Email Kamu: <br><br> <button><a href='http://localhost/research_library/pages/daftar/confirm.php?code=" . $codes . "'class='btn' style='style-decoration:none;'>Verifikasi</a></button><br><br>
 			<br>Salam Hormat,<br>
 			Admin Research Library";
 		$mail->Body = $body;
