@@ -65,7 +65,7 @@
 		$koneksi->query("INSERT INTO author(nama, email, id_fakultas, alamat, no_telepon, status)VALUES('$nama', '$email', '$fakultas', '$alamat', '$no', '$status')");
 
 		$id_author = $koneksi->insert_id;
-		$koneksi->query("INSERT INTO akses(id_author, nip, password, role, verif_code, is_verif)VALUES('$id_author', '$nip', '$pw', '$status', '$code', '1')");
+		$koneksi->query("INSERT INTO akses(id_author, nip, password, role, verif_code, is_verif, is_confirm)VALUES('$id_author', '$nip', '$pw', '$status', '$code', '1', '1')");
 
 		$mail = new PHPMailer();
 
@@ -101,7 +101,7 @@
 		$mail->Username = 'repositorywebs@gmail.com';
 
 		//Password to use for SMTP authentication
-		$mail->Password = 'repositoryweb21';
+		$mail->Password = 'researchlibrary';
 
 		//Set who the message is to be sent from
 		//Note that with gmail you can only use your account address (same as `Username`)

@@ -28,6 +28,7 @@
 	include 'PHPMailer-master/src/PHPMailer.php';
 	include 'PHPMailer-master/src/POP3.php';
 	include 'PHPMailer-master/src/SMTP.php';
+
 	error_reporting(0);
 	$idConfirm = $_GET['idConfirm'];
 	
@@ -132,7 +133,7 @@
 		$mail->Username = 'repositorywebs@gmail.com';
 
 		//Password to use for SMTP authentication
-		$mail->Password = 'repositoryweb21';
+		$mail->Password = 'researchlibrary';
 
 		//Set who the message is to be sent from
 		//Note that with gmail you can only use your account address (same as `Username`)
@@ -155,7 +156,7 @@
 		// $mail->msgHTML(file_get_contents('?p=daftar&act=proses'), __DIR__);
 		$body = "
 			Hi," . $nama . "<br>
-			Silahkan Klik Tombol Dibawah Ini Untuk Verifikasi Email Kamu: <br><br> <button><a href='http://localhost/research_library/pages/daftar/confirm.php?code=" . $codes . "'class='btn' style='style-decoration:none;'>Verifikasi</a></button><br><br>
+			Silahkan Klik Tombol Dibawah Ini Untuk Verifikasi Email Kamu: <br><br> <button><a href='http://localhost/research_library/research_library/pages/daftar/confirm.php?code=" . $codes . "'class='btn' style='style-decoration:none;'>Verifikasi</a></button><br><br>
 			<br>Salam Hormat,<br>
 			Admin Research Library";
 		$mail->Body = $body;

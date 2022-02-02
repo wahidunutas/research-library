@@ -198,6 +198,13 @@ $result = $zip->fetch_assoc();
 
                     <?php } else { ?>
                         <li class="list-group-item "><i class="fas fa-file-pdf"></i> FILES</li>
+                    
+                        <?php foreach ($datadoc as $value) { ?>
+                            <a href="pdf.php?id=<?= $value['id_data_dokumen']; ?>" target="_BLANK">
+                                <li class="list-group-item"><img src="pdf.png" style="width:30px"> <?= $value['files']; ?>
+                            </a> |
+                            <a href="pages/dokumen/download.php?filename=<?= $value['files']; ?>&id=<?= $value['id_info_doc']; ?>&named=<?= $value['named_file']; ?>&judul=<?= $run['judul']; ?>"><i class="fas fa-download"></i> Download </a></li>
+                        <?php } ?>
                         <?php
                         if(!empty($result['file_database'])){
                             echo'
@@ -211,13 +218,6 @@ $result = $zip->fetch_assoc();
                             ';
                         }
                         ?>
-
-                        <?php foreach ($datadoc as $value) { ?>
-                            <a href="pdf.php?id=<?= $value['id_data_dokumen']; ?>" target="_BLANK">
-                                <li class="list-group-item"><img src="pdf.png" style="width:30px"> <?= $value['files']; ?>
-                            </a> |
-                            <a href="pages/dokumen/download.php?filename=<?= $value['files']; ?>&id=<?= $value['id_info_doc']; ?>&named=<?= $value['named_file']; ?>&judul=<?= $run['judul']; ?>"><i class="fas fa-download"></i> Download </a></li>
-                        <?php } ?>
                     <?php } ?>
                 </ul>
 

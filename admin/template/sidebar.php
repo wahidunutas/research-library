@@ -81,9 +81,13 @@
                                       } ?>">
             <i class="nav-icon fas fa-user-tie"></i>
             <p>
-              Civitas Akademik
-              <i class="fas fa-angle-left right"></i>
+              <?php
+              $sqlAkses = $koneksi->query("SELECT * FROM akses WHERE role != 'admin' AND is_confirm='0'");
+              $badge = $sqlAkses->num_rows;
+              ?>
+              Civitas Akademik <?php if($badge > 0){echo'<sup><span class="badge badge-danger">'.$badge.'</span></sup>';}else{'';}?>
             </p>
+            <i class="fas fa-angle-left right"></i>
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
@@ -99,7 +103,7 @@
                                                         echo 'active';
                                                       } ?>">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Mahasiswa</p>
+                <p>Mahasiswa <?php if($badge > 0){echo'<sup><span class="badge badge-danger">'.$badge.'</span></sup>';}else{'';}?></p>
               </a>
             </li>
           </ul>

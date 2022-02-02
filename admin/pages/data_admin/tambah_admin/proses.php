@@ -102,7 +102,7 @@
 		$mail->Username = 'repositorywebs@gmail.com';
 
 		//Password to use for SMTP authentication
-		$mail->Password = 'repositoryweb21';
+		$mail->Password = 'researchlibrary';
 
 		//Set who the message is to be sent from
 		//Note that with gmail you can only use your account address (same as `Username`)
