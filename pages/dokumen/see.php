@@ -206,17 +206,20 @@ $result = $zip->fetch_assoc();
                             <a href="pages/dokumen/download.php?filename=<?= $value['files']; ?>&id=<?= $value['id_info_doc']; ?>&named=<?= $value['named_file']; ?>&judul=<?= $run['judul']; ?>"><i class="fas fa-download"></i> Download </a></li>
                         <?php } ?>
                         <?php
-                        if(!empty($result['file_database'])){
+                        if(!empty($result['file_database']) && !empty($result['file_project']) ){
                             echo'
                                 <li class="list-group-item"><img src="zip.png" style="width:30px"> '.$result['file_project'].' | <a href="pages/dokumen/download.php?zip='.$result['file_project'].'&id='.$result['id_info_doc'].'&judul='.$result['judul'].'"><i class="fas fa-download"></i> Donwload Zip</a></li>  
                                 
-                                <li class="list-group-item"><img src="sql.jpg" style="width:30px"> '.$result['file_database'].' | <a href="pages/dokumen/download.php?sql='.$result['file_database'].'&id='.$result['id_info_doc'].'&judul='.$result['judul'].'"><i class="fas fa-download"></i> Donwload Database</a></li>  
-                            ';
-                        }else{
+                                <li class="list-group-item"><img src="sql.jpg" style="width:30px"> '.$result['file_database'].' | <a href="pages/dokumen/download.php?sql='.$result['file_database'].'&id='.$result['id_info_doc'].'&judul='.$result['judul'].'"><i class="fas fa-download"></i> Donwload Database</a></li>  ';
+                            }elseif(!empty($result['file_project']) && empty($result['file_database'])){
                             echo'
-                                <li class="list-group-item"><img src="zip.png" style="width:30px"> '.$result['file_project'].' | <a href="pages/dokumen/download.php?zip='.$result['file_project'].'&id='.$result['id_info_doc'].'&judul='.$result['judul'].'"><i class="fas fa-download"></i> Donwload Zip</a></li>                            
-                            ';
-                        }
+                                <li class="list-group-item"><img src="zip.png" style="width:30px"> '.$result['file_project'].' | <a href="pages/dokumen/download.php?zip='.$result['file_project'].'&id='.$result['id_info_doc'].'&judul='.$result['judul'].'"><i class="fas fa-download"></i> Donwload Zip</a></li>  ';
+                            }elseif(empty($result['file_project']) && !empty($result['file_database'])){
+                                echo'
+                                <li class="list-group-item"><img src="sql.jpg" style="width:30px"> '.$result['file_database'].' | <a href="pages/dokumen/download.php?sql='.$result['file_database'].'&id='.$result['id_info_doc'].'&judul='.$result['judul'].'"><i class="fas fa-download"></i> Donwload Database</a></li>  ';
+                            }else{
+                                echo '';
+                            }
                         ?>
                     <?php } ?>
                 </ul>

@@ -47,18 +47,17 @@ if($abj){
             <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author=<?= $data['nama_penulis'];?>"><?= $data['nama_penulis'];?></a>&nbsp;&nbsp;&nbsp;
             <?php
         }
-    }elseif(mysqli_num_rows($result2) > 0){
+    }
+    if(mysqli_num_rows($result2) > 0){
         foreach($result2 as $data2){
             if(!empty($data2['nama_penulis_2'])){
                 echo'
                 <i class="fas fa-angle-right"></i>&nbsp;<a href="karya-ilmiah.php?author2='.$data2['nama_penulis_2'].'">'.$data2['nama_penulis_2'].'</a>&nbsp;&nbsp;&nbsp';
-            }else{
-                echo'';
             }
-        }
-        
-    }else{
-        echo'Data tidak ada';
+        }   
+    }
+    if(mysqli_num_rows($result) !== 1 && mysqli_num_rows($result2) !== 1){
+        echo 'Data tidak ada';
     }
     
 }else{

@@ -53,7 +53,7 @@
                             </div>
                         </div>
                     </div>
-
+                    <!-- tipe -->
                     <div class="form-group">
                         <label for="exampleFormControlSelect1">Tipe</label>
                         <select class="form-control" id="tipe" name="tipe">
@@ -117,7 +117,10 @@
                         </div>
 
                         <div class="form-group dsn">
-                            <?php if ($_SESSION["role"] == "dosen") {
+                            <?php 
+                            $sql = $koneksi->query("SELECT * FROM tipe ");
+                            $return = $sql->fetch_assoc();
+                            if ($_SESSION["role"] == "dosen") {
                                 echo '';
                             } else {
                                 echo '
@@ -275,13 +278,25 @@ if (isset($_POST['save'])) {
     $dafpus = $_POST['dafpus'];
 
     // file projects
+    $fileProjectName = $_POST['file-projek'];
     $fprojek = $_FILES['file-projek']['name'];
     $locationFile = $_FILES['file-projek']['tmp_name'];
     $fdatabase = $_FILES['file-database']['name'];
     $locationFileD = $_FILES['file-database']['tmp_name'];
     $fileValid = ['zip'];
-    $eks = explode('.', $fprojek);
-    $eks = strtolower(end($eks));
+    $eks = strtolower(end(explode('.', $fprojek)));
+
+    if(!in_array($eks, $fileValid) ){
+        echo"
+        <script>
+        Swal.fire(
+            'Opss!',
+            'Pastikan File Yang Anda Upload Berekstensi ZIP',
+            'error'
+            )
+        </script>
+        ";
+    }
 
     // file karya ilmiah
     $namafile = $_FILES['doc']['name'];
@@ -291,90 +306,26 @@ if (isset($_POST['save'])) {
     $ekstensiFile = explode('.', $namafile[0]);
     $ekstensiFile = strtolower(end($ekstensiFile));
 
-
-    if (!in_array($ekstensiFile, $ekstensiFileValid)) {
-        echo "
-        <script>
-        Swal.fire(
-            'Opss!',
-            'Pastikan File Yang Anda Upload Berekstensi PDF',
-            'error'
-            )
-            </script>
-            ";
-        return false;
-    }
-    if(!in_array($eks, $fileValid)){
-        echo"
-         <script>
-        Swal.fire(
-            'Opss!',
-            'Pastikan File Yang Anda Upload Berekstensi ZIP',
-            'error'
-            )
-            </script>
-            ";
-        return false;
-        
-    }
     $namedFile = uniqid();
     $namedFile .= '.';
     $namedFile .= $ekstensiFile;
 
-    $sqltipe = $koneksi->query("SELECT * FROM tipe WHERE nama_tipe = 'Laporan Penelitian'");
+    $sqltipe = $koneksi->query("SELECT * FROM tipe");
     $result = $sqltipe->fetch_assoc();
+    $penelitian = $result['Laporan Penelitian'];
 
-    // tipe laporan penelitian
-    if (isset($tipe) == $result) {
-        if (empty($judul && $tipe && $abstrak && $dafpus && $jurusan && $fakultas)) {
-            echo "<script>
-            Swal.fire(
+    if (empty($judul && $tipe && $nama && $abstrak && $dafpus && $jurusan && $fakultas )) {
+        echo "<script>
+        Swal.fire(
             'Pastikan Data Telah Terisi Semua',
             '',
             'error'
-            );
-            </script>";
-        } else {
-
-            $x = $koneksi->query("INSERT INTO info_doc(id_info_doc, judul, nama_penulis, nama_penulis_2, id_tipe, id_fakultas, id_jurusan, dospem, dospem_2, abstrak, dafpus)VALUE('', '$judul', '$nama', '$nama2', '$tipe', '$fakultas', '$jurusan', '$dospem', '$dospem2', '$abstrak', '$dafpus')");
-
-            $id = $koneksi->insert_id;
-            $koneksi->query("INSERT INTO dokumen(id_doc, id_info_doc, id_author, tgl_upload, status_doc)VALUE('', '$id', '$id_user', '$date', '$status')");
-
-            move_uploaded_file($locationFile, "dokumen/project/" . $fprojek);
-            move_uploaded_file($locationFileD, "dokumen/project/" . $fdatabase);
-            $koneksi->query("INSERT INTO data_file_project(id_data_file, id_info_doc, file_project, file_database)VALUE('', '$id', '$fprojek', '$fdatabase')");
-
-            $idnew = $koneksi->insert_id;
-            foreach ($namafile as $key => $tiapfile) {
-                $tiap_lokasi = $lokasifile[$key];
-                $x = uniqid();
-                $x .= '.';
-                $x .= $ekstensiFile;
-                move_uploaded_file($tiap_lokasi, "dokumen/" . $x);
-                $koneksi->query("INSERT INTO data_dokumen(id_data_dokumen, id_info_doc, id_doc, files, named_file)VALUES('', '$id', '$idnew', '$tiapfile', '$x')");
-            }
-            echo "<script>
-                Swal.fire(
-                    'Data File Berhasil Diunggah',
-                    'Tunggu Setelah Di Proses Admin',
-                    'success'
-                    )
-                </script>";
-            echo "<meta http-equiv='refresh' content='1;url=?page=data'>";
-        }
+        );
+        </script>";
+        return false;
     } else {
-        if (empty($judul && $tipe && $nama && $abstrak && $dafpus && $dospem && $jurusan && $fakultas )) {
-            echo "<script>
-            Swal.fire(
-                'Pastikan Data Telah Terisi Semua',
-                '',
-                'error'
-            );
-            </script>";
-            return false;
-        } else {
-
+        if (in_array($ekstensiFile, $ekstensiFileValid)) {
+            
             $x = $koneksi->query("INSERT INTO info_doc(id_info_doc, judul, nama_penulis, nama_penulis_2, id_tipe, id_fakultas, id_jurusan, dospem, dospem_2, abstrak, dafpus)VALUE('', '$judul', '$nama', '$nama2', '$tipe', '$fakultas', '$jurusan', '$dospem', '$dospem2', '$abstrak', '$dafpus')");
 
             $id = $koneksi->insert_id;
@@ -382,7 +333,14 @@ if (isset($_POST['save'])) {
 
             move_uploaded_file($locationFile, "dokumen/project/" . $fprojek);
             move_uploaded_file($locationFileD, "dokumen/project/" . $fdatabase);
-            $koneksi->query("INSERT INTO data_file_project(id_data_file, id_info_doc, file_project, file_database)VALUE('', '$id', '$fprojek', '$fdatabase')");
+            if(!empty($fprojek)){
+                $koneksi->query("INSERT INTO data_file_project(id_data_file, id_info_doc, file_project, file_database)VALUE('', '$id', '$fprojek', '$fdatabase')");
+                
+            }elseif(empty($fprojek) && !empty($fdatabase)){
+                $koneksi->query("INSERT INTO data_file_project(id_data_file, id_info_doc, file_project, file_database)VALUE('', '$id', '$fprojek', '$fdatabase')");
+            }else{
+                '';
+            }
 
             $idnew = $koneksi->insert_id;
             foreach ($namafile as $key => $tiapfile) {
@@ -393,27 +351,44 @@ if (isset($_POST['save'])) {
                 move_uploaded_file($tiap_lokasi, "dokumen/" . $x);
                 $koneksi->query("INSERT INTO data_dokumen(id_data_dokumen, id_info_doc, id_doc, files, named_file)VALUES('', '$id', '$idnew', '$tiapfile', '$x')");
             }
-            echo "<script>
-                Swal.fire(
-                    'Data File Berhasil Diunggah',
-                    'Tunggu Setelah Di Proses Admin',
-                    'success'
-                    )
-                </script>";
-            echo "<meta http-equiv='refresh' content='1;url=?page=data'>";
+
+            
+        }else{
+            echo "
+            <script>
+            Swal.fire(
+                'Opss!',
+                'Pastikan File Yang Anda Upload Berekstensi PDF',
+                'error'
+                )
+                </script>
+                ";
+            return true;
         }
+        
+        
+        echo "<script>
+            Swal.fire(
+                'Data File Berhasil Diunggah',
+                'Tunggu Setelah Di Proses Admin',
+                'success'
+                )
+            </script>";
+        echo "<meta http-equiv='refresh' content='1;url=?page=data'>";
     }
 }
+// }
 
 
 if (isset($_POST['saveJurnal'])) {
     // jurnal
-    $id_user = $_SESSION['login']['id_akses'];
+    // $id_user = $_SESSION['login']['id_akses'];
+    // $a = $koneksi->query("SELECT * FROM author WHERE id_author = '$test'");
+    // $b = $a->fetch_assoc();
+    // $c = $b['nama'];
     $test = $_SESSION['login']['id_author'];
-    $a = $koneksi->query("SELECT * FROM author WHERE id_author = '$test'");
-    $b = $a->fetch_assoc();
-    $c = $b['nama'];
-
+    $nama = $_POST['nama'];
+    $nama2 = $_POST['nama2'];
     $tp = $_POST['tipejurnal'];
     $jdl = $_POST['judul'];
     $link = $_POST['link'];
@@ -456,7 +431,7 @@ if (isset($_POST['saveJurnal'])) {
     } else {
         move_uploaded_file($lokasifile, "dokumen/jurnal/" . $newname);
 
-        $koneksi->query("INSERT INTO jurnal(id_jurnal, id_author, tipe_jurnal, judul, tgl_upload_jurnal, deskripsi, daftar_pustaka, file, name_file, posted_by, link, status_jurnal)VALUES('', '$test', '$tp', '$jdl', '$tgl', '$des', '$dfp', '$newname', '$namafile', '$c', '$link', 'Pending')");
+        $koneksi->query("INSERT INTO jurnal(id_jurnal, id_author, tipe_jurnal, judul, tgl_upload_jurnal, deskripsi, daftar_pustaka, file, name_file, posted_by, posted_by2, link, status_jurnal)VALUES('', '$test', '$tp', '$jdl', '$tgl', '$des', '$dfp', '$newname', '$namafile', '$nama', '$nama2', '$link', 'Pending')");
 
         echo "<script>
         Swal.fire(

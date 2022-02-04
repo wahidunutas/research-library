@@ -124,11 +124,35 @@ $Fzip = $result['file_project'];
         </a>
         <div class="collapse" id="collapseExample">
             <ul class="list-group list-group-flush">
-            <a href="#" data-toggle="modal" data-target="#viewZip"><li class="list-group-item"><i class="fas fa-file-archive"></i>  <?= $result['file_project'];?></li></a>
+            
             <!-- file database -->
             <?php
-            if(!empty($result['file_database'])){
-                echo'<a href="#"><li class="list-group-item"><i class="fas fa-database"></i> '.$result['file_database'].'</li></a>';
+            if(!empty($result['file_database']) && !empty($result['file_project']) ){
+                echo'
+                <a href="#" data-toggle="modal" data-target="#viewZip"> 
+                    <li class="list-group-item">
+                        <i class="fas fa-file-archive"></i> '.$result['file_project'].'
+                    </li>
+                </a>
+                <a href="#"> 
+                <li class="list-group-item">
+                    <i class="fas fa-database"></i> '.$result['file_database'].'
+                </li>
+                </a>';
+            }elseif(!empty($result['file_project']) && empty($result['file_database'])){
+                echo'
+                <a href="#" data-toggle="modal" data-target="#viewZip"> 
+                    <li class="list-group-item">
+                        <i class="fas fa-file-archive"></i> '.$result['file_project'].'
+                    </li>
+                </a>';
+            }elseif(empty($result['file_project']) && !empty($result['file_database'])){
+                echo'
+                <a href="#"> 
+                <li class="list-group-item">
+                    <i class="fas fa-database"></i> '.$result['file_database'].'
+                </li>
+                </a>';
             }else{
                 echo '';
             }

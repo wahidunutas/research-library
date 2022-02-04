@@ -235,16 +235,70 @@ if ($jurnal) {
                 Lihat Files
             </a>
             <div class="collapse" id="collapseExample">
-                <!-- <div class="card card-body"> -->
-                    <ul class="list-group list-group-flush">'; ?>
-                    <?php foreach ($datadoc as $key => $value) : ?>
-                        <a href="?p=dokumen&aksi=lihatpdf&id=<?= $value['id_data_dokumen']; ?>">
-                            <li class="list-group-item"><i class="fas fa-angle-right"></i> <?= $value['files']; ?></li>
-                        </a>
-                    <?php endforeach; ?>
-                    <?php echo '
-                    </ul>
-                <!-- </div> -->
+                <ul class="list-group list-group-flush">'; 
+                $Fproject = $koneksi->query("SELECT * FROM data_file_project WHERE id_info_doc = '$id'");
+                $dataProject = $Fproject->fetch_assoc();
+
+                if(!empty($dataProject['file_database']) && !empty($dataProject['file_project']) ){
+                    echo'
+                    <a href="#" data-toggle="modal" data-target="#viewZip"> 
+                        <li class="list-group-item">
+                            <i class="fas fa-file-archive"></i> '.$dataProject['file_project'].'
+                        </li>
+                    </a>
+                    <a href="#"> 
+                    <li class="list-group-item">
+                        <i class="fas fa-database"></i> '.$dataProject['file_database'].'
+                    </li>
+                    </a>';
+                }elseif(!empty($dataProject['file_project']) && empty($dataProject['file_database'])){
+                    echo'
+                    <a href="#" data-toggle="modal" data-target="#viewZip"> 
+                        <li class="list-group-item">
+                            <i class="fas fa-file-archive"></i> '.$dataProject['file_project'].'
+                        </li>
+                    </a>';
+                }elseif(empty($dataProject['file_project']) && !empty($dataProject['file_database'])){
+                    echo'
+                    <a href="#"> 
+                    <li class="list-group-item">
+                        <i class="fas fa-database"></i> '.$dataProject['file_database'].'
+                    </li>
+                    </a>';
+                }else{
+                    echo '';
+                }
+                ?>
+                <?php foreach ($datadoc as $key => $value) : ?>
+                    <a href="?p=dokumen&aksi=lihatpdf&id=<?= $value['id_data_dokumen']; ?>">
+                        <li class="list-group-item"><i class="fas fa-angle-right"></i> <?= $value['files']; ?></li>
+                    </a>
+                <?php endforeach; ?>
+                <?php echo '
+                </ul>
+                <!-- view Zip -->
+                <div class="modal fade" id="viewZip" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">'.$dataProject['file_project'].'</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">';
+                            $zips = new ZipArchive();
+                            if ($zips->open('../user/dokumen/project/'.$dataProject['file_project']) === true) {
+                                for ($i = 0; $i < $zips->numFiles; $i++) {
+                                    echo '=> '.$zips->getNameIndex($i).'<br>';        
+                                    
+                                }
+                            }
+                        echo'
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
         </div>
         <div class="card-footer">

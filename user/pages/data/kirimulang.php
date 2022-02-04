@@ -44,40 +44,46 @@ if(isset($id)){
                             <?php
                             $sqlZip = $koneksi->query("SELECT * FROM data_file_project WHERE id_info_doc = '$id'");
                             $result = $sqlZip->fetch_assoc();
-                            if(empty($result['file_database'])){
+                            if(!empty($result['file_database']) && !empty($result['file_project']) ){
                                 echo '<li class="list-group-item">'.$result['file_project'].'
-                                    <a href="?page=data&act=edit&zip='.$result['id_data_file'].'">edit</a></li>';
-                            }else{
-                                echo'
-                                <li class="list-group-item">'.$result['file_project'].'
-                                <a href="?page=data&act=edit&zip='.$result['id_data_file'].'">edit</a></li> 
+                                <a href="?page=data&act=edit&zip='.$result['id_data_file'].'">edit</a></li>
                                 <li class="list-group-item">'.$result['file_database'].'
                                 <a href="#" data-toggle="modal" data-target="#editDb">edit</a></li>
-                                
-                                
-                                <div class="modal fade" id="editDb" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form method="post" enctype="multipart/form-data">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="staticBackdropLabel">Ubah File Database</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <input type="text" name="dbLama" value="'.$result['file_database'].'" class="form-control mb-2" readonly>
-                                                    <input type="file" name="database">
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" name="ubahDb" class="btn btn-primary">Simpan</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
                                 ';
+                            }elseif(!empty($result['file_project']) && empty($result['file_database'])){
+                                echo'
+                                <li class="list-group-item">'.$result['file_project'].'
+                                <a href="?page=data&act=edit&zip='.$result['id_data_file'].'">edit</a></li>';
+                            }elseif(empty($result['file_project']) && !empty($result['file_database'])){
+                                echo'
+                                <li class="list-group-item">'.$result['file_database'].'
+                                <a href="#" data-toggle="modal" data-target="#editDb">edit</a></li>';
+                            }else{
+                                echo '';
                             }
+                            // modal
+                            echo'
+                            <div class="modal fade" id="editDb" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <form method="post" enctype="multipart/form-data">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabel">Ubah File Database</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="text" name="dbLama" value="'.$result['file_database'].'" class="form-control mb-2" readonly>
+                                                <input type="file" name="database">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" name="ubahDb" class="btn btn-primary">Simpan</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>';
                             
                             $sql_data = $koneksi->query("SELECT *  FROM info_Doc JOIN data_dokumen ON data_dokumen.id_info_doc=info_doc.id_info_doc WHERE data_dokumen.id_info_doc = '$id'");
                             while($tampil = $sql_data->fetch_assoc()){
@@ -151,28 +157,33 @@ if(isset($id)){
                         <hr>
                         <b>Fakultas</b>
                         <p>'.$data['fakul'].' -> '.$data['jur'].'</p>
-                        <hr>
-                        <b>DOSEN PEMBIMBING</b>';
-                        
+                        <hr>';
+                        if(empty($data['dospem'])){
+                            echo'';
+                        }else
                         if(empty($data['dospem_2'])){
                             echo '
+                            <b>DOSEN PEMBIMBING</b>
                             <div class="form-group">
                                 <input type="text" class="form-control" name="dospem" value="'. $data['dospem'].'">
                             </div>
+                            <hr>
                             ';
                         }else{
                             echo '
+                            <b>DOSEN PEMBIMBING</b>
                             <div class="form-group">
                                 <input type="text" class="form-control" name="dospem" value="'. $data['dospem'].'">
                             </div>
                             <div class="form-group">
                                 <input type="text" class="form-control" name="dospem2" value="'. $data['dospem_2'].'">
                             </div>
+                            <hr>
                             ';
                         }
                         
                         echo'
-                        <hr>
+                        
                         <b>ABSTRAK</b>
                         <div class="form-group">
                             <textarea id="summernote" name="abstrak" placeholder="isi abstrak" required>'. $data['abstrak'].'</textarea>
