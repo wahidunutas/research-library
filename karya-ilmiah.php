@@ -718,25 +718,22 @@ $limitStart = ($hal - 1) * $limit;
                 <div class="card shadow mt-4">
                     <div class="card-header">Paling Banyak Didownload</div>
                     <div class="card-body">
-                        <?php 
-                        $sql_don = $koneksi->query("SELECT id_info_doc, id_jurnal, judul, sum(jml) as jml FROM downloads GROUP BY id LIMIT $limitStart,$limit");
-                        while($top = $sql_don->fetch_assoc()){
-                            $jdl = substr($top['judul'], 0, 40).'...';
-                            echo'
-                            <li class="text-capitalize"> <i class="fas fa-angle-right"></i>'; 
-                            if($top['id_jurnal'] == 0){
-                                echo' <a href="index.php?p=dokumen&id='.$top['id_info_doc'].'">'.$jdl.' ('.$top['jml'].')</a>';
-                            }elseif($top['id_info_doc'] == 0){
-                                echo'
-                                <a href="index.php?p=bacajurnal&id='.$top['id_jurnal'].'">'.$jdl.' ('.$top['jml'].')</a>
-                                ';
+                        <?php
+                        $sql_don = $koneksi->query("SELECT id_info_doc, id_jurnal, judul, sum(jml) as jml FROM downloads GROUP BY id ORDER BY jml DESC LIMIT $limitStart, $limit");
+                        while ($top = $sql_don->fetch_assoc()) {
+                            echo '
+                                    <li class="text-capitalize"> <i class="fas fa-angle-right"></i>';
+                            if ($top['id_jurnal'] == 0) {
+                                echo ' <a href="index.php?p=dokumen&id=' . $top['id_info_doc'] . '">' . $top['judul'] . ' (' . $top['jml'] . ')</a>';
+                            } elseif ($top['id_info_doc'] == 0) {
+                                echo '
+                                        <a href="index.php?p=bacajurnal&id=' . $top['id_jurnal'] . '">' . $top['judul'] . ' (' . $top['jml'] . ')</a>
+                                        ';
                             }
-                            echo'
-                            </li>
-                            ';
-                        }
-                    
-                        ?>
+                            echo '
+                                    </li>
+                                    ';
+                        } ?>
                     </div>
                 </div>
                 <div class="card shadow mt-4">
@@ -752,7 +749,7 @@ $limitStart = ($hal - 1) * $limit;
                                 echo' <a href="index.php?p=dokumen&id='.$top['id_info_doc'].'">'.$top['judul'].'</a>';
                             }elseif($top['id_info_doc'] == 0){
                                 echo'
-                                 <a href="index.php?p=bacajurnal&id='.$top['id_jurnal'].'">'.$top['judul'].'</a>
+                                <a href="index.php?p=bacajurnal&id='.$top['id_jurnal'].'">'.$top['judul'].'</a>
                                 ';
                             }
                             echo'
