@@ -10,8 +10,8 @@ $date = date('Y-m-d');
 
 if($filename){ 
     $back_dir    = "../../user/dokumen/";
-    $file = $back_dir.$zip;
-    $nameFile = basename($zip);
+    $file = $back_dir.$named;
+    $nameFile = basename($filename);
     
     if (file_exists($file)) {
         header('Content-Description: File Transfer');
